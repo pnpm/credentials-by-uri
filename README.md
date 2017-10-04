@@ -1,5 +1,7 @@
 # credentials-by-uri
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/pnpm/credentials-by-uri.svg)](https://greenkeeper.io/)
+
 [![npm version](https://img.shields.io/npm/v/credentials-by-uri.svg)](https://www.npmjs.com/package/credentials-by-uri)
 [![Status](https://travis-ci.org/pnpm/credentials-by-uri.svg?branch=master)](https://travis-ci.org/pnpm/credentials-by-uri "See test builds")
 
