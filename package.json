@@ -1,0 +1,39 @@
+{
+  "name": "credentials-by-uri",
+  "version": "0.0.0",
+  "description": "Gets credentials for URI from npm configs",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pnpm/credentials-by-uri.git"
+  },
+  "keywords": [
+    "npm",
+    "config",
+    "credentials"
+  ],
+  "author": {
+    "name": "Zoltan Kochan",
+    "email": "z@kochan.io",
+    "url": "https://www.kochan.io",
+    "twitter": "ZoltanKochan"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pnpm/credentials-by-uri/issues"
+  },
+  "homepage": "https://github.com/pnpm/credentials-by-uri#readme",
+  "dependencies": {
+    "nerf-dart": "^1.0.0"
+  },
+  "devDependencies": {
+    "safe-buffer": "^5.1.1",
+    "tape": "^4.8.0"
+  }
+}
