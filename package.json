@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "description": "Gets credentials for URI from npm configs",
   "main": "index.js",
+  "typings": "index.d.ts",
   "files": [
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "scripts": {
     "test": "node test"
