@@ -8,7 +8,7 @@ module.exports = getCredentialsByURI
 function getCredentialsByURI (uri, config) {
   assert(uri && typeof uri === 'string', 'registry URL is required')
   const nerfed = toNerfDart(uri)
-  const defnerf = toNerfDart(config['registry'])
+  const defnerf = toNerfDart(config.registry)
 
   // hidden class micro-optimization
   const c = {
@@ -37,7 +37,7 @@ function getCredentialsByURI (uri, config) {
 
   // Handle the old-style _auth=<base64> style for the default
   // registry, if set.
-  const {
+  let {
     _auth: authDef,
     username: userDef,
     _password: passDef
@@ -63,8 +63,8 @@ function getCredentialsByURI (uri, config) {
 
   if (config[`${nerfed}:email`]) {
     c.email = config[`${nerfed}:email`]
-  } else if (config['email']) {
-    c.email = config['email']
+  } else if (config.email) {
+    c.email = config.email
   }
 
   if (c.username && c.password) {

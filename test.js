@@ -9,7 +9,7 @@ test('credentialsByUri()', t => {
 
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
     registry: 'http://registry.foobar.eu/',
-    '//registry.foobar.eu/:_authToken': 'simple-token',
+    '//registry.foobar.eu/:_authToken': 'simple-token'
   }), {
     scope: '//registry.foobar.eu/',
     token: 'simple-token',
@@ -23,7 +23,7 @@ test('credentialsByUri()', t => {
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
     registry: 'http://registry.foobar.eu/',
     '//registry.foobar.eu/:_password': encodeBase64('foobar'),
-    '//registry.foobar.eu/:username': 'foobar',
+    '//registry.foobar.eu/:username': 'foobar'
   }), {
     scope: '//registry.foobar.eu/',
     token: undefined,
