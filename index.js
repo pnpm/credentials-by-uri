@@ -37,9 +37,11 @@ function getCredentialsByURI (uri, config) {
 
   // Handle the old-style _auth=<base64> style for the default
   // registry, if set.
-  const authDef = config['_auth']
-  const userDef = config['username']
-  const passDef = config['_password']
+  const {
+    _auth: authDef,
+    username: userDef,
+    _password: passDef
+  } = config
   if (authDef && !(userDef && passDef)) {
     authDef = Buffer.from(authDef, 'base64').toString()
     authDef = authDef.split(':')
