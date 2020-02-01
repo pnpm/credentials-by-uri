@@ -8,6 +8,9 @@
     "index.js",
     "index.d.ts"
   ],
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
     "test": "node test"
   },

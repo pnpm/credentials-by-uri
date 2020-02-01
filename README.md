@@ -9,10 +9,8 @@ Taken from npm: https://github.com/npm/npm/blob/24ec9f2dd4dcd4f25622dff3a502d4e8
 
 ## Install
 
-Install it via npm.
-
 ```
-npm install credentials-by-uri
+pnpm add credentials-by-uri
 ```
 
 ## Usage
