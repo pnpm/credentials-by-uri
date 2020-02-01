@@ -59,14 +59,14 @@ function getCredentialsByURI (uri, config) {
     c.username = userDef
   }
 
-  if (config[nerfed + ':email']) {
-    c.email = config[nerfed + ':email']
+  if (config[`${nerfed}:email`]) {
+    c.email = config[`${nerfed}:email`]
   } else if (config['email']) {
     c.email = config['email']
   }
 
   if (c.username && c.password) {
-    c.auth = Buffer.from(c.username + ':' + c.password).toString('base64')
+    c.auth = Buffer.from(`${c.username}:${c.password}`).toString('base64')
   }
 
   return c
