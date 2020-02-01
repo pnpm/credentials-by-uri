@@ -26,7 +26,8 @@ function getCredentialsByURI (uri, config) {
     const val = config[`${nerfed}:always-auth`]
     c.alwaysAuth = val === 'false' ? false : !!val
   } else if (config['always-auth'] !== undefined) {
-    c.alwaysAuth = config['always-auth']
+    c.alwaysAuth = config['always-auth'] === 'false'
+      ? false : Boolean(config['always-auth'])
   }
 
   if (config[`${nerfed}:_authToken`]) {

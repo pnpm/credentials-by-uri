@@ -37,6 +37,104 @@ test('credentialsByUri()', t => {
   t.end()
 })
 
+test('reading always-auth', t => {
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    '//registry.foobar.eu/:always-auth': 'true'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: undefined,
+    auth: undefined,
+    alwaysAuth: true
+  })
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    '//registry.foobar.eu/:always-auth': 'false'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: undefined,
+    auth: undefined,
+    alwaysAuth: false
+  })
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    'always-auth': 'true'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: undefined,
+    auth: undefined,
+    alwaysAuth: true
+  })
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    'always-auth': 'false'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: undefined,
+    auth: undefined,
+    alwaysAuth: false
+  })
+  t.end()
+})
+
+test('old-style _auth', t => {
+  const auth = encodeBase64('foo:bar')
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    username: 'foo',
+    _auth: auth
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: 'foo',
+    password: 'bar',
+    email: undefined,
+    auth,
+    alwaysAuth: undefined
+  })
+  t.end()
+})
+
+test('email', t => {
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    email: 'foo@bar.com'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: 'foo@bar.com',
+    auth: undefined,
+    alwaysAuth: undefined
+  })
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    '//registry.foobar.eu/:email': 'foo@bar.com'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: 'foo@bar.com',
+    auth: undefined,
+    alwaysAuth: undefined
+  })
+  t.end()
+})
+
 function encodeBase64 (string) {
   return safeBuffer.from(string, 'utf8').toString('base64')
 }
