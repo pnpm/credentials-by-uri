@@ -16,7 +16,14 @@ pnpm add credentials-by-uri
 ```js
 const credentialsByUri = require('credentials-by-uri')
 
-console.log(credentialsByUri())
+const config = {
+  '//registry.com/:_authToken': 'f23jj93f32dsaf==',
+  '//registry.com/:always-auth': 'false'
+}
+
+console.log(
+  credentialsByUri('https://registry.com', config)
+)
 > { authHeaderValue: 'Bearer f23jj93f32dsaf==', alwaysAuth: false }
 ```
 
