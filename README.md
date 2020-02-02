@@ -5,8 +5,6 @@
 
 > Gets credentials for URI from npm configs
 
-Taken from npm: https://github.com/npm/npm/blob/24ec9f2dd4dcd4f25622dff3a502d4e86a025c0d/lib/config/get-credentials-by-uri.js.
-
 ## Install
 
 ```
@@ -19,6 +17,7 @@ pnpm add credentials-by-uri
 const credentialsByUri = require('credentials-by-uri')
 
 console.log(credentialsByUri())
+> { authHeaderValue: 'Bearer f23jj93f32dsaf==', alwaysAuth: false }
 ```
 
 ## Related
