@@ -12,12 +12,7 @@ test('credentialsByUri()', t => {
     '//registry.foobar.eu/:_authToken': 'simple-token'
   }), {
     scope: '//registry.foobar.eu/',
-    token: 'simple-token',
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
-    alwaysAuth: undefined
+    token: 'simple-token'
   })
 
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
@@ -26,12 +21,9 @@ test('credentialsByUri()', t => {
     '//registry.foobar.eu/:username': 'foobar'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
     password: 'foobar',
     username: 'foobar',
-    email: undefined,
-    auth: 'Zm9vYmFyOmZvb2Jhcg==',
-    alwaysAuth: undefined
+    auth: 'Zm9vYmFyOmZvb2Jhcg=='
   })
 
   t.end()
@@ -43,11 +35,6 @@ test('reading always-auth', t => {
     '//registry.foobar.eu/:always-auth': 'true'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
     alwaysAuth: true
   })
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
@@ -55,35 +42,19 @@ test('reading always-auth', t => {
     '//registry.foobar.eu/:always-auth': 'false'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
     alwaysAuth: false
   })
-  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+  t.deepEqual(credentialsByUri('http://registry.hu/', {
     registry: 'http://registry.foobar.eu/',
     'always-auth': 'true'
   }), {
-    scope: '//registry.foobar.eu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
-    alwaysAuth: true
+    scope: '//registry.hu/'
   })
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
     registry: 'http://registry.foobar.eu/',
     'always-auth': 'false'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
     alwaysAuth: false
   })
   t.end()
@@ -97,24 +68,31 @@ test('old-style _auth', t => {
     _auth: auth
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
     username: 'foo',
     password: 'bar',
-    email: undefined,
-    auth,
-    alwaysAuth: undefined
+    auth
   })
   t.deepEqual(credentialsByUri('http://registry.hu/', {
     registry: 'http://registry.foobar.eu/',
     _auth: auth
   }), {
-    scope: '//registry.hu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
-    alwaysAuth: undefined
+    scope: '//registry.hu/'
+  }, 'the default old-style auth token should not be returned for non-default registry')
+
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    '//registry.foobar.eu/:_auth': auth
+  }), {
+    scope: '//registry.foobar.eu/',
+    username: 'foo',
+    password: 'bar',
+    auth
+  })
+  t.deepEqual(credentialsByUri('http://registry.hu/', {
+    registry: 'http://registry.foobar.eu/',
+    '//registry.foobar.eu/:_auth': auth
+  }), {
+    scope: '//registry.hu/'
   }, 'the default old-style auth token should not be returned for non-default registry')
   t.end()
 })
@@ -127,25 +105,16 @@ test('username/password for the default registry', t => {
     _password: 'bar'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
     username: 'foo',
     password: 'bar',
-    email: undefined,
-    auth,
-    alwaysAuth: undefined
+    auth
   })
   t.deepEqual(credentialsByUri('http://registry.hu/', {
     registry: 'http://registry.foobar.eu/',
     username: 'foo',
     _password: 'bar'
   }), {
-    scope: '//registry.hu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: undefined,
-    auth: undefined,
-    alwaysAuth: undefined
+    scope: '//registry.hu/'
   }, 'username/password should not be returned for non-default registry')
   t.end()
 })
@@ -156,24 +125,14 @@ test('email', t => {
     email: 'foo@bar.com'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: 'foo@bar.com',
-    auth: undefined,
-    alwaysAuth: undefined
+    email: 'foo@bar.com'
   })
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
     registry: 'http://registry.foobar.eu/',
     '//registry.foobar.eu/:email': 'foo@bar.com'
   }), {
     scope: '//registry.foobar.eu/',
-    token: undefined,
-    username: undefined,
-    password: undefined,
-    email: 'foo@bar.com',
-    auth: undefined,
-    alwaysAuth: undefined
+    email: 'foo@bar.com'
   })
   t.end()
 })

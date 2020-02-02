@@ -10,62 +10,56 @@ function getCredentialsByURI (uri, config) {
   const nerfed = toNerfDart(uri)
   const defnerf = toNerfDart(config.registry)
 
+  const creds = getScopedCredentials(nerfed, `${nerfed}:`, config)
+  if (nerfed !== defnerf) return creds
+
+  return {
+    ...getScopedCredentials(nerfed, '', config),
+    ...creds
+  }
+}
+
+function getScopedCredentials (nerfed, scope, config) {
   // hidden class micro-optimization
   const c = {
-    scope: nerfed,
-    token: undefined,
-    password: undefined,
-    username: undefined,
-    email: undefined,
-    auth: undefined,
-    alwaysAuth: undefined
+    scope: nerfed
   }
 
   // used to override scope matching for tokens as well as legacy auth
-  if (config[`${nerfed}:always-auth`] !== undefined) {
-    const val = config[`${nerfed}:always-auth`]
+  if (config[`${scope}always-auth`] !== undefined) {
+    const val = config[`${scope}always-auth`]
     c.alwaysAuth = val === 'false' ? false : !!val
-  } else if (config['always-auth'] !== undefined) {
-    c.alwaysAuth = config['always-auth'] === 'false'
-      ? false : Boolean(config['always-auth'])
   }
 
-  if (config[`${nerfed}:_authToken`]) {
-    c.token = config[`${nerfed}:_authToken`]
-    // the bearer token is enough, don't confuse things
+  // Check for bearer token
+  if (config[`${scope}_authToken`]) {
+    c.token = config[`${scope}_authToken`]
     return c
   }
 
-  // Handle the old-style _auth=<base64> style for the default
-  // registry, if set.
-  let {
-    _auth: authDef,
-    username: userDef,
-    _password: passDef
-  } = config
-  if (authDef && !(userDef && passDef)) {
-    authDef = Buffer.from(authDef, 'base64').toString()
+  // Check for basic auth token
+  if (config[`${scope}_auth`]) {
+    c.auth = config[`${scope}_auth`]
+    let authDef = Buffer.from(c.auth, 'base64').toString()
     authDef = authDef.split(':')
-    userDef = authDef.shift()
-    passDef = authDef.join(':')
+    c.username = authDef.shift()
+    c.password = authDef.join(':')
+    return c
   }
 
-  if (config[`${nerfed}:_password`]) {
-    c.password = Buffer.from(config[`${nerfed}:_password`], 'base64').toString('utf8')
-  } else if (nerfed === defnerf && passDef) {
-    c.password = passDef
+  // Check for username/password auth
+  if (config[`${scope}username`]) {
+    c.username = config[`${scope}username`]
   }
-
-  if (config[`${nerfed}:username`]) {
-    c.username = config[`${nerfed}:username`]
-  } else if (nerfed === defnerf && userDef) {
-    c.username = userDef
+  if (config[`${scope}_password`]) {
+    if (scope === '') {
+      c.password = config[`${scope}_password`]
+    } else {
+      c.password = Buffer.from(config[`${scope}_password`], 'base64').toString('utf8')
+    }
   }
-
-  if (config[`${nerfed}:email`]) {
-    c.email = config[`${nerfed}:email`]
-  } else if (config.email) {
-    c.email = config.email
+  if (config[`${scope}email`]) {
+    c.email = config[`${scope}email`]
   }
 
   if (c.username && c.password) {
