@@ -21,9 +21,7 @@ function getCredentialsByURI (uri, config) {
 
 function getScopedCredentials (nerfed, scope, config) {
   // hidden class micro-optimization
-  const c = {
-    scope: nerfed
-  }
+  const c = {}
 
   // used to override scope matching for tokens as well as legacy auth
   if (config[`${scope}always-auth`] !== undefined) {
@@ -39,11 +37,7 @@ function getScopedCredentials (nerfed, scope, config) {
 
   // Check for basic auth token
   if (config[`${scope}_auth`]) {
-    c.auth = config[`${scope}_auth`]
-    let authDef = Buffer.from(c.auth, 'base64').toString()
-    authDef = authDef.split(':')
-    c.username = authDef.shift()
-    c.password = authDef.join(':')
+    c._auth = config[`${scope}_auth`]
     return c
   }
 
@@ -58,12 +52,9 @@ function getScopedCredentials (nerfed, scope, config) {
       c.password = Buffer.from(config[`${scope}_password`], 'base64').toString('utf8')
     }
   }
-  if (config[`${scope}email`]) {
-    c.email = config[`${scope}email`]
-  }
 
   if (c.username && c.password) {
-    c.auth = Buffer.from(`${c.username}:${c.password}`).toString('base64')
+    c._auth = Buffer.from(`${c.username}:${c.password}`).toString('base64')
   }
 
   return c
