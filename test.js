@@ -11,7 +11,7 @@ test('credentialsByUri()', t => {
     registry: 'http://registry.foobar.eu/',
     '//registry.foobar.eu/:_authToken': 'simple-token'
   }), {
-    token: 'simple-token'
+    authHeaderValue: 'Bearer simple-token'
   })
 
   t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
@@ -19,9 +19,7 @@ test('credentialsByUri()', t => {
     '//registry.foobar.eu/:_password': encodeBase64('foobar'),
     '//registry.foobar.eu/:username': 'foobar'
   }), {
-    password: 'foobar',
-    username: 'foobar',
-    _auth: 'Zm9vYmFyOmZvb2Jhcg=='
+    authHeaderValue: 'Basic Zm9vYmFyOmZvb2Jhcg=='
   })
 
   t.end()
@@ -61,7 +59,7 @@ test('old-style _auth', t => {
     username: 'foo',
     _auth: auth
   }), {
-    _auth: auth
+    authHeaderValue: `Basic ${auth}`
   })
   t.deepEqual(credentialsByUri('http://registry.hu/', {
     registry: 'http://registry.foobar.eu/',
@@ -73,7 +71,7 @@ test('old-style _auth', t => {
     registry: 'http://registry.foobar.eu/',
     '//registry.foobar.eu/:_auth': auth
   }), {
-    _auth: auth
+    authHeaderValue: `Basic ${auth}`
   })
   t.deepEqual(credentialsByUri('http://registry.hu/', {
     registry: 'http://registry.foobar.eu/',
@@ -90,9 +88,7 @@ test('username/password for the default registry', t => {
     username: 'foo',
     _password: 'bar'
   }), {
-    username: 'foo',
-    password: 'bar',
-    _auth: auth
+    authHeaderValue: `Basic ${auth}`
   })
   t.deepEqual(credentialsByUri('http://registry.hu/', {
     registry: 'http://registry.foobar.eu/',
