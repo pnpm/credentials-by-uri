@@ -104,6 +104,49 @@ test('old-style _auth', t => {
     auth,
     alwaysAuth: undefined
   })
+  t.deepEqual(credentialsByUri('http://registry.hu/', {
+    registry: 'http://registry.foobar.eu/',
+    _auth: auth
+  }), {
+    scope: '//registry.hu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: undefined,
+    auth: undefined,
+    alwaysAuth: undefined
+  }, 'the default old-style auth token should not be returned for non-default registry')
+  t.end()
+})
+
+test('username/password for the default registry', t => {
+  const auth = encodeBase64('foo:bar')
+  t.deepEqual(credentialsByUri('http://registry.foobar.eu/', {
+    registry: 'http://registry.foobar.eu/',
+    username: 'foo',
+    _password: 'bar'
+  }), {
+    scope: '//registry.foobar.eu/',
+    token: undefined,
+    username: 'foo',
+    password: 'bar',
+    email: undefined,
+    auth,
+    alwaysAuth: undefined
+  })
+  t.deepEqual(credentialsByUri('http://registry.hu/', {
+    registry: 'http://registry.foobar.eu/',
+    username: 'foo',
+    _password: 'bar'
+  }), {
+    scope: '//registry.hu/',
+    token: undefined,
+    username: undefined,
+    password: undefined,
+    email: undefined,
+    auth: undefined,
+    alwaysAuth: undefined
+  }, 'username/password should not be returned for non-default registry')
   t.end()
 })
 
