@@ -1,11 +1,8 @@
 'use strict'
 const assert = require('assert')
-
 const toNerfDart = require('nerf-dart')
 
-module.exports = getCredentialsByURI
-
-function getCredentialsByURI (uri, config) {
+module.exports = function getCredentialsByURI (config, uri) {
   assert(uri && typeof uri === 'string', 'registry URL is required')
   const nerfed = toNerfDart(uri)
   const defnerf = toNerfDart(config.registry)

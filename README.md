@@ -22,7 +22,7 @@ const config = {
 }
 
 console.log(
-  credentialsByUri('https://registry.com', config)
+  credentialsByUri(config, 'https://registry.com')
 )
 > { authHeaderValue: 'Bearer f23jj93f32dsaf==', alwaysAuth: false }
 ```
