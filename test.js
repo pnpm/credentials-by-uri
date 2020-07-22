@@ -22,6 +22,13 @@ test('credentialsByUri()', t => {
     authHeaderValue: 'Basic Zm9vYmFyOmZvb2Jhcg=='
   })
 
+  t.deepEqual(credentialsByUri({
+    registry: 'https://registry.npmjs.org/',
+    '//registry.foobar.eu/artifactory/api/npm/:_authToken': 'simple-token'
+  }, 'http://registry.foobar.eu/artifactory/api/npm/npm-local'), {
+    authHeaderValue: 'Bearer simple-token'
+  })
+
   t.end()
 })
 
