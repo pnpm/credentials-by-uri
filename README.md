@@ -17,6 +17,7 @@ pnpm add credentials-by-uri
 const credentialsByUri = require('credentials-by-uri')
 
 const config = {
+  registry: 'https://registry.npmjs.com',
   '//registry.com/:_authToken': 'f23jj93f32dsaf==',
   '//registry.com/:always-auth': 'false'
 }
