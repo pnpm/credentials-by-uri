@@ -1,5 +1,6 @@
 'use strict'
 const test = require('tape')
+const path = require('path')
 const credentialsByUri = require('.')
 const safeBuffer = require('safe-buffer').Buffer
 
@@ -102,6 +103,45 @@ test('username/password for the default registry', t => {
     _password: 'bar'
   }, 'http://registry.hu/'), {
   }, 'username/password should not be returned for non-default registry')
+  t.end()
+})
+
+test('tokenHelper', t => {
+  t.deepEqual(credentialsByUri({
+    registry: 'http://registry.foobar.eu/'
+  }, 'http://registry.foobar.eu/', {
+    tokenHelper: path.join(__dirname, 'test-exec.js')
+  }), {
+    authHeaderValue: 'Bearer token-from-spawn'
+  })
+  t.deepEqual(credentialsByUri({
+    registry: 'http://registry.foobar.eu/'
+  }, 'http://registry.hu/', {
+    '//registry.hu/:tokenHelper': path.join(__dirname, 'test-exec.js')
+  }), {
+    authHeaderValue: 'Bearer token-from-spawn'
+  })
+  t.throws(() => {
+    credentialsByUri({
+      registry: 'http://registry.foobar.eu/'
+    }, 'http://registry.foobar.eu/', {
+      tokenHelper: path.join(__dirname, 'test-exec-error.js')
+    })
+  }, 'a process exiting with non-zero should throw')
+  t.throws(() => {
+    credentialsByUri({
+      registry: 'http://registry.foobar.eu/'
+    }, 'http://registry.foobar.eu/', {
+      tokenHelper: './test-exec.js'
+    })
+  }, 'token helpers must be absolute paths')
+  t.throws(() => {
+    credentialsByUri({
+      registry: 'http://registry.foobar.eu/'
+    }, 'http://registry.foobar.eu/', {
+      tokenHelper: path.join(__dirname, 'test-exec.js') + ' arg1'
+    })
+  }, 'token helpers must be absolute paths, without arguments')
   t.end()
 })
 
