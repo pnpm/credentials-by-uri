@@ -1,8 +1,22 @@
 'use strict'
 const test = require('tape')
 const path = require('path')
+const os = require('os')
 const credentialsByUri = require('.')
 const safeBuffer = require('safe-buffer').Buffer
+
+const osTokenHelper = {
+  linux: path.join(__dirname, 'test-exec.js'),
+  win32: path.join(__dirname, 'test-exec.bat')
+}
+
+const osErrorTokenHelper = {
+  linux: path.join(__dirname, 'test-exec-error.js'),
+  win32: path.join(__dirname, 'test-exec-error.bat')
+}
+
+// Only exception is win32, all others behave like linux
+const osFamily = os.platform() === 'win32' ? 'win32' : 'linux'
 
 test('credentialsByUri()', t => {
   t.throws(() => credentialsByUri({}), /registry URL is required/)
@@ -110,14 +124,14 @@ test('tokenHelper', t => {
   t.deepEqual(credentialsByUri({
     registry: 'http://registry.foobar.eu/'
   }, 'http://registry.foobar.eu/', {
-    tokenHelper: path.join(__dirname, 'test-exec.js')
+    tokenHelper: osTokenHelper[osFamily]
   }), {
     authHeaderValue: 'Bearer token-from-spawn'
   })
   t.deepEqual(credentialsByUri({
     registry: 'http://registry.foobar.eu/'
   }, 'http://registry.hu/', {
-    '//registry.hu/:tokenHelper': path.join(__dirname, 'test-exec.js')
+    '//registry.hu/:tokenHelper': osTokenHelper[osFamily]
   }), {
     authHeaderValue: 'Bearer token-from-spawn'
   })
@@ -125,7 +139,7 @@ test('tokenHelper', t => {
     credentialsByUri({
       registry: 'http://registry.foobar.eu/'
     }, 'http://registry.foobar.eu/', {
-      tokenHelper: path.join(__dirname, 'test-exec-error.js')
+      tokenHelper: osErrorTokenHelper[osFamily]
     })
   }, 'a process exiting with non-zero should throw')
   t.throws(() => {
@@ -139,7 +153,7 @@ test('tokenHelper', t => {
     credentialsByUri({
       registry: 'http://registry.foobar.eu/'
     }, 'http://registry.foobar.eu/', {
-      tokenHelper: path.join(__dirname, 'test-exec.js') + ' arg1'
+      tokenHelper: osTokenHelper[osFamily] + ' arg1'
     })
   }, 'token helpers must be absolute paths, without arguments')
   t.end()
