@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/pnpm/credentials-by-uri#readme",
   "dependencies": {
+    "@pnpm/error": "^2.0.0",
     "nerf-dart": "^1.0.0"
   },
   "devDependencies": {

@@ -4,6 +4,7 @@ const toNerfDart = require('nerf-dart')
 const { spawnSync } = require('child_process')
 const path = require('path')
 const fs = require('fs')
+const PnpmError = require('@pnpm/error')
 
 module.exports = function getCredentialsByURI (config, uri, userConfig) {
   assert(uri && typeof uri === 'string', 'registry URL is required')
@@ -32,13 +33,13 @@ function getScopedCredentials (nerfed, scope, config, userConfig) {
   if (userConfig && userConfig[`${scope}tokenHelper`]) {
     const helper = userConfig[`${scope}tokenHelper`]
     if (!path.isAbsolute(helper) || !fs.existsSync(helper)) {
-      throw new Error(`${scope}tokenHelper must be an absolute path, without arguments`)
+      throw new PnpmError('BAD_TOKEN_HELPER_PATH', `${scope}tokenHelper must be an absolute path, without arguments`)
     }
 
     const spawnResult = spawnSync(helper, { shell: true })
 
     if (spawnResult.status !== 0) {
-      throw new Error(`Error running ${helper} as a token helper, configured as ${scope}tokenHelper. Exit code ${spawnResult.status}`)
+      throw new PnpmError('TOKEN_HELPER_ERROR_STATUS', `Error running ${helper} as a token helper, configured as ${scope}tokenHelper. Exit code ${spawnResult.status}`)
     }
     c.authHeaderValue = spawnResult.stdout.toString('utf8').trimEnd()
     return c
