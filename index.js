@@ -1,22 +1,26 @@
 'use strict'
 const assert = require('assert')
 const toNerfDart = require('nerf-dart')
+const { spawnSync } = require('child_process')
+const path = require('path')
+const fs = require('fs')
+const PnpmError = require('@pnpm/error')
 
-module.exports = function getCredentialsByURI (config, uri) {
+module.exports = function getCredentialsByURI (config, uri, userConfig) {
   assert(uri && typeof uri === 'string', 'registry URL is required')
   const nerfed = toNerfDart(uri)
   const defnerf = toNerfDart(config.registry)
 
-  const creds = getScopedCredentials(nerfed, `${nerfed}:`, config)
+  const creds = getScopedCredentials(nerfed, `${nerfed}:`, config, userConfig)
   if (nerfed !== defnerf) return creds
 
   return {
-    ...getScopedCredentials(nerfed, '', config),
+    ...getScopedCredentials(nerfed, '', config, userConfig),
     ...creds
   }
 }
 
-function getScopedCredentials (nerfed, scope, config) {
+function getScopedCredentials (nerfed, scope, config, userConfig) {
   // hidden class micro-optimization
   const c = {}
 
@@ -24,6 +28,21 @@ function getScopedCredentials (nerfed, scope, config) {
   if (config[`${scope}always-auth`] !== undefined) {
     const val = config[`${scope}always-auth`]
     c.alwaysAuth = val === 'false' ? false : !!val
+  }
+
+  if (userConfig && userConfig[`${scope}tokenHelper`]) {
+    const helper = userConfig[`${scope}tokenHelper`]
+    if (!path.isAbsolute(helper) || !fs.existsSync(helper)) {
+      throw new PnpmError('BAD_TOKEN_HELPER_PATH', `${scope}tokenHelper must be an absolute path, without arguments`)
+    }
+
+    const spawnResult = spawnSync(helper, { shell: true })
+
+    if (spawnResult.status !== 0) {
+      throw new PnpmError('TOKEN_HELPER_ERROR_STATUS', `Error running ${helper} as a token helper, configured as ${scope}tokenHelper. Exit code ${spawnResult.status}`)
+    }
+    c.authHeaderValue = spawnResult.stdout.toString('utf8').trimEnd()
+    return c
   }
 
   // Check for bearer token

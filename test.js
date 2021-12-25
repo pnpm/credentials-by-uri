@@ -1,7 +1,22 @@
 'use strict'
 const test = require('tape')
+const path = require('path')
+const os = require('os')
 const credentialsByUri = require('.')
 const safeBuffer = require('safe-buffer').Buffer
+
+const osTokenHelper = {
+  linux: path.join(__dirname, 'test-exec.js'),
+  win32: path.join(__dirname, 'test-exec.bat')
+}
+
+const osErrorTokenHelper = {
+  linux: path.join(__dirname, 'test-exec-error.js'),
+  win32: path.join(__dirname, 'test-exec-error.bat')
+}
+
+// Only exception is win32, all others behave like linux
+const osFamily = os.platform() === 'win32' ? 'win32' : 'linux'
 
 test('credentialsByUri()', t => {
   t.throws(() => credentialsByUri({}), /registry URL is required/)
@@ -102,6 +117,45 @@ test('username/password for the default registry', t => {
     _password: 'bar'
   }, 'http://registry.hu/'), {
   }, 'username/password should not be returned for non-default registry')
+  t.end()
+})
+
+test('tokenHelper', t => {
+  t.deepEqual(credentialsByUri({
+    registry: 'http://registry.foobar.eu/'
+  }, 'http://registry.foobar.eu/', {
+    tokenHelper: osTokenHelper[osFamily]
+  }), {
+    authHeaderValue: 'Bearer token-from-spawn'
+  })
+  t.deepEqual(credentialsByUri({
+    registry: 'http://registry.foobar.eu/'
+  }, 'http://registry.hu/', {
+    '//registry.hu/:tokenHelper': osTokenHelper[osFamily]
+  }), {
+    authHeaderValue: 'Bearer token-from-spawn'
+  })
+  t.throws(() => {
+    credentialsByUri({
+      registry: 'http://registry.foobar.eu/'
+    }, 'http://registry.foobar.eu/', {
+      tokenHelper: osErrorTokenHelper[osFamily]
+    })
+  }, 'a process exiting with non-zero should throw')
+  t.throws(() => {
+    credentialsByUri({
+      registry: 'http://registry.foobar.eu/'
+    }, 'http://registry.foobar.eu/', {
+      tokenHelper: './test-exec.js'
+    })
+  }, 'token helpers must be absolute paths')
+  t.throws(() => {
+    credentialsByUri({
+      registry: 'http://registry.foobar.eu/'
+    }, 'http://registry.foobar.eu/', {
+      tokenHelper: osTokenHelper[osFamily] + ' arg1'
+    })
+  }, 'token helpers must be absolute paths, without arguments')
   t.end()
 })
 
