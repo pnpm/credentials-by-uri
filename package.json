@@ -1,6 +1,6 @@
 {
   "name": "credentials-by-uri",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Gets credentials for URI from npm configs",
   "main": "index.js",
   "typings": "index.d.ts",
